@@ -1,0 +1,33 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Temporary files and Office lock files
+~$*.xlsx
+~$*.xls
+~$*
+*.tmp
+
+# Operating system files
+Thumbs.db
+[Dd]esktop.ini
+.DS_Store
+
+# Ignore alternate raw file name to prevent duplicate upload
+online_retail_II.xlsx
