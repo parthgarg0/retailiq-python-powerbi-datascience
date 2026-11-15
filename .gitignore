@@ -29,5 +29,11 @@ Thumbs.db
 [Dd]esktop.ini
 .DS_Store
 
+# Environment variables and secrets
+.env
+.env.*
+*.key
+*.pem
+
 # Ignore alternate raw file name to prevent duplicate upload
 online_retail_II.xlsx

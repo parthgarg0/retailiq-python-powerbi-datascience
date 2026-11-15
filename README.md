@@ -10,25 +10,30 @@ An end-to-end retail business intelligence and data science project analyzing mu
 - [3. Dataset Overview & Source](#3-dataset-overview--source)
 - [4. Technology Stack](#4-technology-stack)
 - [5. Project Directory Structure](#5-project-directory-structure)
-- [6. Data Preprocessing Workflow](#6-data-preprocessing-workflow)
-- [7. Implementation vs. Investigations vs. Decisions](#7-implementation-vs-investigations-vs-decisions)
-- [8. Data Quality Findings & Validation Results](#8-data-quality-findings--validation-results)
-- [9. Final Dataset Statistics](#9-final-dataset-statistics)
-- [10. Current Project Status](#10-current-project-status)
-- [11. Upcoming Stages](#11-upcoming-stages)
-- [12. Exploratory Data Analysis (EDA)](#12-exploratory-data-analysis-eda)
-  - [12.1 EDA Overview & Objectives](#121-eda-overview--objectives)
-  - [12.2 Cross-Sheet Deduplication & Dataset Dimensions](#122-cross-sheet-deduplication--dataset-dimensions)
-  - [12.3 Summary of Eight Core EDA Tasks](#123-summary-of-eight-core-eda-tasks)
-  - [12.4 Key Analytical Findings & Business Insights](#124-key-analytical-findings--business-insights)
-  - [12.5 Customer RFM Segmentation Analysis](#125-customer-rfm-segmentation-analysis)
-  - [12.6 Product Performance, Growth & Decline](#126-product-performance-growth--decline)
-  - [12.7 Geographic Performance & Wholesale Dynamics](#127-geographic-performance--wholesale-dynamics)
-  - [12.8 Temporal Trends & Trading Velocity](#128-temporal-trends--trading-velocity)
-  - [12.9 Cancellations, Returns & Anomaly Diagnostics](#129-cancellations-returns--anomaly-diagnostics)
-  - [12.10 Revenue Validation Methodology](#1210-revenue-validation-methodology)
-  - [12.11 Analytical Limitations & Interpretation Cautions](#1211-analytical-limitations--interpretation-cautions)
-  - [12.12 Link to EDA Notebook](#1212-link-to-eda-notebook)
+- [6. Project Workflow](#6-project-workflow)
+- [7. Data Preprocessing Workflow](#7-data-preprocessing-workflow)
+- [8. Implementation vs. Investigations vs. Decisions](#8-implementation-vs-investigations-vs-decisions)
+- [9. Data Quality Findings & Validation Results](#9-data-quality-findings--validation-results)
+- [10. Final Dataset Statistics](#10-final-dataset-statistics)
+- [11. Exploratory Data Analysis (EDA)](#11-exploratory-data-analysis-eda)
+  - [11.1 EDA Overview & Objectives](#111-eda-overview--objectives)
+  - [11.2 Cross-Sheet Deduplication & Dataset Dimensions](#112-cross-sheet-deduplication--dataset-dimensions)
+  - [11.3 Summary of Eight Core EDA Tasks](#113-summary-of-eight-core-eda-tasks)
+  - [11.4 Key Analytical Findings & Business Insights](#114-key-analytical-findings--business-insights)
+  - [11.5 Customer RFM Segmentation Analysis](#115-customer-rfm-segmentation-analysis)
+  - [11.6 Product Performance, Growth & Decline](#116-product-performance-growth--decline)
+  - [11.7 Geographic Performance & Wholesale Dynamics](#117-geographic-performance--wholesale-dynamics)
+  - [11.8 Temporal Trends & Trading Velocity](#118-temporal-trends--trading-velocity)
+  - [11.9 Cancellations, Returns & Anomaly Diagnostics](#119-cancellations-returns--anomaly-diagnostics)
+  - [11.10 Revenue Validation Methodology](#1110-revenue-validation-methodology)
+  - [11.11 Analytical Limitations & Interpretation Cautions](#1111-analytical-limitations--interpretation-cautions)
+  - [11.12 Link to EDA Notebook](#1112-link-to-eda-notebook)
+- [12. Machine Learning](#12-machine-learning)
+  - [12.1 Customer Analysis & Segmentation — RFM + K-Means](#121-customer-analysis--segmentation--rfm--k-means)
+  - [12.2 Sales Forecasting — ARIMA, SARIMA & Baselines](#122-sales-forecasting--arima-sarima--baselines)
+- [13. Business Insights & Practical Recommendations](#13-business-insights--practical-recommendations)
+- [14. Future Scope](#14-future-scope)
+- [Author & Acknowledgements](#author--acknowledgements)
 
 ---
 
@@ -36,7 +41,7 @@ An end-to-end retail business intelligence and data science project analyzing mu
 
 **RetailIQ** is an enterprise-grade analytics project designed to turn raw transactional e-commerce data into actionable business intelligence. The dataset encompasses international transactions from a UK-based online retail business across two consecutive operational years (2009–2010 and 2010–2011).
 
-The project combines rigorous, verifiable data preprocessing, feature engineering, and exploratory data analysis (EDA) using Python, establishing a validated data foundation for customer segmentation (RFM), statistical modeling, and interactive Power BI executive dashboards.
+The project combines rigorous, verifiable data preprocessing, feature engineering, exploratory data analysis (EDA), customer segmentation (RFM + K-Means), and monthly time-series sales forecasting (ARIMA / SARIMA / Seasonal Naive) using Python, establishing a production-grade analytics foundation for interactive Power BI executive dashboards.
 
 ---
 
@@ -46,8 +51,10 @@ The project combines rigorous, verifiable data preprocessing, feature engineerin
 - **Transaction & Anomaly Classification**: Accurately detect and flag order cancellations, product returns, zero-price items, and accounting balance adjustments without destroying audit trails.
 - **Accurate Financial Modeling**: Establish robust business rules for revenue calculation that correctly account for refunds and cancellations while isolating invalid transactions.
 - **Comprehensive Exploratory Data Analysis**: Evaluate multi-year sales velocity, seasonality surges, customer retention behaviors, product performance lifecycles, and geographic expansion patterns.
+- **Customer Intelligence via Machine Learning**: Group customers using RFM metrics and unsupervised K-Means clustering to distinguish core loyal buyers from dormant accounts.
+- **Predictive Time-Series Forecasting**: Build, evaluate, and benchmark revenue forecasting models (ARIMA, SARIMA, Naive, Seasonal Naive) using rolling-origin cross-validation.
 - **Enterprise-Grade Documentation**: Provide reproducible preprocessing pipelines, transparent audit metrics, and clear tracking of data-cleaning rationales.
-- **Downstream BI & Analytics Readiness**: Output clean, validated data structures optimized for customer segmentation (RFM), cohort retention modeling, and interactive Power BI executive dashboards.
+- **Downstream BI & Analytics Readiness**: Output clean, validated data structures optimized for interactive Power BI executive dashboards.
 
 ---
 
@@ -78,37 +85,73 @@ The dataset used in this project is the widely recognized **Online Retail II** d
 
 ## 4. Technology Stack
 
-- **Data Processing & Scripting**: Python 3.10+, Jupyter Notebook (`preprocessing.ipynb`, `eda.ipynb`)
+- **Data Processing & Scripting**: Python 3.10+, Jupyter Notebooks
 - **Core Libraries**:
   - `pandas`: Vectorized manipulation, data cleaning, datetime parsing, cross-tabulation, aggregation.
-  - `numpy`: Conditional vectorized logic (`np.where`, `np.isclose`).
-  - `matplotlib`: Data visualization, trend plots, distribution histograms.
+  - `numpy`: Conditional vectorized logic (`np.where`, `np.isclose`), mathematical transformations (`np.log1p`).
+  - `scikit-learn`: Feature scaling (`StandardScaler`), clustering (`KMeans`), cluster validation (`silhouette_score`), dimensionality reduction (`PCA`), model metrics (`mean_absolute_error`, `mean_squared_error`, `r2_score`).
+  - `statsmodels`: Time-series forecasting (`ARIMA`, `SARIMAX`).
+  - `matplotlib` & `seaborn`: Data visualization, cluster scatter plots, trend lines, diagnostic plots.
   - `openpyxl`: Excel reading and multi-sheet writing engine.
 - **Version Control & Repository Management**: Git, GitHub
-- **Planned BI & Visualization**: Power BI Desktop (DAX, Power Query, Data Modeling)
+- **Planned BI & Visualization**: Power BI Desktop (DAX, Power Query, Star Schema Data Modeling)
 
 ---
 
 ## 5. Project Directory Structure
 
 ```text
-retailiq-python-powerbi-datascience/
+RetailIQ/
 │
-├── .gitignore               # Ignored build artifacts, checkpoints, and OS/Excel lock files
-├── README.md                # Comprehensive project documentation (this file)
-├── preprocessing.ipynb      # Complete, reproducible Python preprocessing notebook
-├── eda.ipynb                # Comprehensive Exploratory Data Analysis (EDA) notebook
+├── preprocessing/
+│   └── preprocessing.ipynb
 │
-├── Online Retail II.xlsx    # Original raw multi-sheet Excel dataset (UCI Repository)
-├── preprocessed.xlsx        # Intermediate preprocessing output (flagged, standardized)
-└── RetailIQ_Final.xlsx      # Final validated production dataset (cleaned, verified schema)
+├── eda/
+│   └── eda.ipynb
+│
+├── machine_learning/
+│   ├── 01_customer_analysis_rfm_kmeans.ipynb
+│   ├── 02_sales_forecasting.ipynb
+│   ├── customer_rfm_kmeans_results.csv
+│   ├── customer_cluster_profiles.csv
+│   ├── forecasting_model_evaluation.csv
+│   ├── rolling_forecast_predictions.csv
+│   └── future_sales_forecast.csv
+│
+├── power_bi/
+│   └── (dashboard will be added later)
+│
+├── Online Retail II.xlsx
+├── preprocessed.xlsx
+├── RetailIQ_Final.xlsx
+├── README.md
+└── .gitignore
 ```
 
 ---
 
-## 6. Data Preprocessing Workflow
+## 6. Project Workflow
 
-The preprocessing pipeline implemented in `preprocessing.ipynb` follows a modular and strictly validated approach across both annual worksheets:
+The project is structured into six progressive phases:
+
+1. **Stage 1: Data Collection & Ingestion** — `[Completed]`  
+   Acquired the multi-year raw transaction logs from the UCI Machine Learning Repository (`Online Retail II.xlsx`).
+2. **Stage 2: Data Cleaning & Preprocessing** — `[Completed]`  
+   Standardized column schemas, removed 12,133 single-sheet duplicates, engineered business anomaly flags, applied validated revenue rules, and produced `preprocessed.xlsx` and `RetailIQ_Final.xlsx` ([preprocessing.ipynb](preprocessing/preprocessing.ipynb)).
+3. **Stage 3: Exploratory Data Analysis (EDA)** — `[Completed]`  
+   Identified and resolved 22,202 cross-sheet duplicates, audited sales velocity, seasonal surges, product lifecycles, international wholesale dynamics, and validated calculation precision ([eda.ipynb](eda/eda.ipynb)).
+4. **Stage 4: Customer Analysis & Segmentation** — `[Completed]`  
+   Engineered RFM metrics, log-transformed/scaled features, ran K-Means clustering ($k=2$, Silhouette Score: 0.439), visualized clusters via PCA, and profiled behavioral segments ([01_customer_analysis_rfm_kmeans.ipynb](machine_learning/01_customer_analysis_rfm_kmeans.ipynb)).
+5. **Stage 5: Sales Forecasting & Model Evaluation** — `[Completed]`  
+   Prepared monthly time series, implemented rolling-origin cross-validation over a 6-month test horizon, evaluated Naive, Seasonal Naive, ARIMA, and SARIMA models, and forecasted 3 months into the future ([02_sales_forecasting.ipynb](machine_learning/02_sales_forecasting.ipynb)).
+6. **Stage 6: Interactive Power BI Dashboard** — `[Upcoming]`  
+   Architecting a dimensional star schema, building executive DAX measures, and designing interactive dashboards in Power BI Desktop.
+
+---
+
+## 7. Data Preprocessing Workflow
+
+The preprocessing pipeline implemented in [preprocessing/preprocessing.ipynb](preprocessing/preprocessing.ipynb) follows a modular and strictly validated approach across both annual worksheets:
 
 ```mermaid
 flowchart TD
@@ -154,7 +197,7 @@ flowchart TD
 
 ---
 
-## 7. Implementation vs. Investigations vs. Decisions
+## 8. Implementation vs. Investigations vs. Decisions
 
 To maintain analytical rigor, the project separates programmatic execution from exploratory audits and business retention rules:
 
@@ -178,7 +221,7 @@ To maintain analytical rigor, the project separates programmatic execution from 
 Contrary to naive data-cleaning practices that delete any row containing missing or negative values, **records were deliberately retained** based on explicit business logic:
 
 1. **Retaining Missing `CustomerID` (107,833 in 09–10; 135,037 in 10–11)**:
-   - *Rationale*: These rows represent guest checkouts and anonymous online shoppers. Deleting them would artificially erase over £3.6M+ in legitimate sales revenue and severely skew market basket analysis. They are retained for sales, revenue, and product analytics, but will be isolated during customer-level (RFM) modeling.
+   - *Rationale*: These rows represent guest checkouts and anonymous online shoppers. Deleting them would artificially erase over £3.6M+ in legitimate sales revenue and severely skew market basket analysis. They are retained for sales, revenue, and product analytics, but isolated during customer-level modeling.
 2. **Retaining Missing `Description` (2,928 in 09–10; 1,454 in 10–11)**:
    - *Rationale*: All missing descriptions coincide with zero-price administrative adjustments and missing customer IDs. Retaining them preserves the raw transaction count for operational auditing.
 3. **Retaining Zero-Price Transactions (`UnitPrice == 0`) (3,681 in 09–10; 2,510 in 10–11)**:
@@ -193,7 +236,7 @@ Contrary to naive data-cleaning practices that delete any row containing missing
 
 ---
 
-## 8. Data Quality Findings & Validation Results
+## 9. Data Quality Findings & Validation Results
 
 ### Metric Verification Summary
 
@@ -224,7 +267,7 @@ $$\Delta = |\text{Revenue}_{\text{actual}} - \text{Revenue}_{\text{expected}}|$$
 
 ---
 
-## 9. Final Dataset Statistics
+## 10. Final Dataset Statistics
 
 The production dataset is stored in `RetailIQ_Final.xlsx` across two sheets:
 - **Sheet 1**: `Year 2009-2010` (518,596 rows, 14 columns)
@@ -248,41 +291,10 @@ The production dataset is stored in `RetailIQ_Final.xlsx` across two sheets:
 
 ---
 
-## 10. Current Project Status
+## 11. Exploratory Data Analysis (EDA)
 
-- [x] Comprehensive review of raw retail transaction data.
-- [x] Schema harmonization across multi-year sheets.
-- [x] Full deduplication (12,133 duplicate records removed across sheets).
-- [x] Anomaly identification and categorical flagging (`IsCancelled`, `IsReturn`, `IsInvalidPrice`).
-- [x] Financial revenue engineering and zero-mismatch validation.
-- [x] Intermediate (`preprocessed.xlsx`) and production (`RetailIQ_Final.xlsx`) file generation.
-- [x] Exploratory Data Analysis (EDA) on corrected deduplicated multi-year dataset (`eda.ipynb`).
-- [x] Cross-sheet overlap resolution (removing 22,202 cross-sheet duplicates).
-- [x] Corrected Customer RFM segmentation across 5,881 identified accounts.
-- [x] Product growth, decline, and Pareto revenue contribution analysis.
-- [x] Temporal, weekday, and hourly transaction pattern analysis.
-- [x] Return and cancellation mechanics audit with floating-point revenue validation.
-- [x] Complete project documentation and GitHub repository publication.
-
----
-
-## 11. Upcoming Stages
-
-1. **Stage 3: Advanced Customer Analytics & Machine Learning**
-   - **Cohort Retention Modeling**: Tracking customer repurchase behaviors over time.
-   - **Customer Lifetime Value (CLV) Prediction**: Quantifying future net revenue per customer segment.
-   - **Market Basket Analysis**: Association rule mining (Apriori / FP-Growth) to discover cross-selling opportunities.
-2. **Stage 4: Power BI Enterprise Dashboard Development**
-   - Star schema data modeling (Fact Sales, Dim Date, Dim Customer, Dim Product, Dim Geography).
-   - Advanced DAX metrics: Year-over-Year (YoY) growth, Month-over-Month (MoM) sales velocity, Customer Lifetime Value (CLV), Return Rate %.
-   - Interactive executive reporting: Executive Summary, Customer Deep Dive, Product Performance, and Operational Anomaly Tracker.
-
----
-
-## 12. Exploratory Data Analysis (EDA)
-
-### 12.1 EDA Overview & Objectives
-The Exploratory Data Analysis phase, executed in [eda.ipynb](eda.ipynb), investigates the multi-year transactional dynamics of the business across the two operational periods (2009–2010 and 2010–2011).
+### 11.1 EDA Overview & Objectives
+The Exploratory Data Analysis phase, executed in [eda/eda.ipynb](eda/eda.ipynb), investigates the multi-year transactional dynamics of the business across the two operational periods (2009–2010 and 2010–2011).
 
 The core objectives of the EDA were:
 1. Assess multi-year revenue trends, order velocity, and average order value (AOV) dynamics.
@@ -295,7 +307,7 @@ The core objectives of the EDA were:
 
 ---
 
-### 12.2 Cross-Sheet Deduplication & Dataset Dimensions
+### 11.2 Cross-Sheet Deduplication & Dataset Dimensions
 
 A critical structural discovery made during the EDA was the presence of **cross-sheet duplicate records** between the two yearly files. 
 
@@ -306,7 +318,7 @@ While each sheet was individually deduplicated during initial preprocessing, the
 - **Exact Inner-Merge Duplication**: Exactly **22,202** records were identical across all 14 columns.
 
 ```python
-# Cross-sheet deduplication implementation (eda.ipynb, Cell 4)
+# Cross-sheet deduplication implementation (eda/eda.ipynb, Cell 4)
 df_combined = pd.concat([df1, df2], ignore_index=True)
 df_combined = df_combined.drop_duplicates().reset_index(drop=True)
 ```
@@ -323,9 +335,9 @@ df_combined = df_combined.drop_duplicates().reset_index(drop=True)
 
 ---
 
-### 12.3 Summary of Eight Core EDA Tasks
+### 11.3 Summary of Eight Core EDA Tasks
 
-The exploration in [eda.ipynb](eda.ipynb) systematically addressed eight key analytical domains:
+The exploration in [eda/eda.ipynb](eda/eda.ipynb) systematically addressed eight key analytical domains:
 
 1. **Dataset Overview**: Evaluated total dimensions, date ranges (2009-12-01 to 2011-12-09), unique invoice counts (53,628), unique product SKUs (5,305), unique customer profiles (5,942), and international markets (43 countries).
 2. **Sales Performance Analysis**: Evaluated annual revenue, non-cancelled order volume, net quantity, and Average Order Value (AOV), tracking a 3.61% revenue increase between periods.
@@ -338,7 +350,7 @@ The exploration in [eda.ipynb](eda.ipynb) systematically addressed eight key ana
 
 ---
 
-### 12.4 Key Analytical Findings & Business Insights
+### 11.4 Key Analytical Findings & Business Insights
 
 | Dimension / Metric | Year 2009–2010 | Year 2010–2011 | Corrected Combined |
 |---|---:|---:|---:|
@@ -363,7 +375,7 @@ The exploration in [eda.ipynb](eda.ipynb) systematically addressed eight key ana
 
 ---
 
-### 12.5 Customer RFM Segmentation Analysis
+### 11.5 Customer RFM Segmentation Analysis
 
 Customer segmentation was conducted on the **corrected deduplicated combined dataset** for all **5,881 unique customers** with valid customer IDs and completed orders. 
 
@@ -387,12 +399,9 @@ Quintile scores (1 to 5) were generated via rank percentiles to prevent quantiza
 | **New Customers** | $R == 5 \wedge F == 1$ | 76 | 1.29% | First-time recent purchasers. Onboarding nurture sequences to drive the critical second purchase. |
 | **Total** | | **5,881** | **100.00%** | |
 
-> [!IMPORTANT]
-> **RFM Methodology Rule**: These published RFM figures represent the recalculated segmentation on the deduplicated dataset (5,881 accounts). They exclude guest checkouts (missing `CustomerID`), which are analyzed independently in aggregate sales models.
-
 ---
 
-### 12.6 Product Performance, Growth & Decline
+### 11.6 Product Performance, Growth & Decline
 
 Product revenue and unit sales were analyzed by `StockCode` and cleaned `Description`:
 
@@ -432,7 +441,7 @@ Product revenue and unit sales were analyzed by `StockCode` and cleaned `Descrip
 
 ---
 
-### 12.7 Geographic Performance & Wholesale Dynamics
+### 11.7 Geographic Performance & Wholesale Dynamics
 
 The business delivered to **43 distinct countries** across the two-year operational history:
 
@@ -461,7 +470,7 @@ While the United Kingdom dominates overall sales volume, international markets e
 
 ---
 
-### 12.8 Temporal Trends & Trading Velocity
+### 11.8 Temporal Trends & Trading Velocity
 
 #### 1. Monthly Seasonality:
 - **Peak Trading Period**: October and November consistently represent annual peaks.
@@ -487,7 +496,7 @@ Analyzing trading volume by hour reveals that sales follow a bell curve centered
 
 ---
 
-### 12.9 Cancellations, Returns & Anomaly Diagnostics
+### 11.9 Cancellations, Returns & Anomaly Diagnostics
 
 #### 1. Cancellation Dynamics:
 - **Total Cancelled Invoices**: **8,292** out of 53,628 unique invoices (**15.46% cancellation rate**).
@@ -498,7 +507,7 @@ Analyzing trading volume by hour reveals that sales follow a bell curve centered
   > **Interpretation Caution**: The £1.46M cancellation value is an **estimated upper-bound metric** based on the unit price and absolute quantity of cancelled line items. It must **not** be interpreted as confirmed net lost revenue, as customers often re-order alternative items, modify basket quantities, or cancel before payment authorization.
 
 #### 2. Returns vs. Operational Adjustments:
-A major finding in `eda.ipynb` (Cells 30–32) was the decoupling of negative quantities from consumer product returns:
+A major finding in [eda/eda.ipynb](eda/eda.ipynb) (Cells 30–32) was the decoupling of negative quantities from consumer product returns:
 - **Non-Cancelled Return Records (`Quantity < 0` and `IsCancelled == False`)**: **3,393 records** across 3,393 distinct invoices.
 - **UnitPrice Analysis**: **100% of these 3,393 records have `UnitPrice == 0.0`** (Recorded revenue = £0.00).
 - **Text Descriptions**: An examination of product descriptions revealed that these entries are internal operational inventory log adjustments rather than retail returns:
@@ -522,7 +531,7 @@ A major finding in `eda.ipynb` (Cells 30–32) was the decoupling of negative qu
 
 ---
 
-### 12.10 Revenue Validation Methodology
+### 11.10 Revenue Validation Methodology
 
 During the EDA quality audit (Cells 40–41), stored revenue was verified against the expected business formula:
 $$\text{Expected Revenue} = \text{np.where}((\neg\text{IsCancelled}) \wedge (\text{UnitPrice} > 0), \text{Quantity} \times \text{UnitPrice}, 0)$$
@@ -544,7 +553,7 @@ $$\text{Expected Revenue} = \text{np.where}((\neg\text{IsCancelled}) \wedge (\te
 
 ---
 
-### 12.11 Analytical Limitations & Interpretation Cautions
+### 11.11 Analytical Limitations & Interpretation Cautions
 
 1. **Guest Checkouts & Anonymous Traffic**: 235,151 records (**22.76%**) lack a `CustomerID`. These cannot be integrated into customer-level RFM or cohort analysis. They must be included for sales, revenue, and SKU velocity analysis to avoid losing £3.1M+ in sales.
 2. **Cancellation Value Upper Bound**: The estimated cancellation value of £1,462,797.75 represents potential gross cancelled order value and should never be reported as realized financial loss.
@@ -553,11 +562,181 @@ $$\text{Expected Revenue} = \text{np.where}((\neg\text{IsCancelled}) \wedge (\te
 
 ---
 
-### 12.12 Link to EDA Notebook
+### 11.12 Link to EDA Notebook
 
-The fully executed, self-contained Exploratory Data Analysis notebook containing all source code, detailed outputs, visualizations, and diagnostic logs is available in the repository root:
+The fully executed, self-contained Exploratory Data Analysis notebook containing all source code, detailed outputs, visualizations, and diagnostic logs is available in the repository:
 
-- **Jupyter Notebook**: [eda.ipynb](eda.ipynb)
+- **Jupyter Notebook**: [eda/eda.ipynb](eda/eda.ipynb)
+
+---
+
+## 12. Machine Learning
+
+The Machine Learning stage of **RetailIQ** comprises two core analytical tracks:
+1. **Unsupervised Customer Segmentation**: Combining Recency, Frequency, and Monetary (RFM) modeling with K-Means clustering to uncover customer behavioral archetypes.
+2. **Time-Series Sales Forecasting**: Benchmarking statistical and baseline models (ARIMA, SARIMA, Naive, Seasonal Naive) on monthly revenue using rolling-origin cross-validation.
+
+---
+
+### 12.1 Customer Analysis & Segmentation — RFM + K-Means
+
+The customer segmentation pipeline is implemented in [machine_learning/01_customer_analysis_rfm_kmeans.ipynb](machine_learning/01_customer_analysis_rfm_kmeans.ipynb), operating on **5,878 unique identified customers** who completed positive-revenue purchases:
+
+```mermaid
+flowchart TD
+    A["Deduplicated Combined Dataset<br/>(1,033,036 rows)"] --> B["Filter Completed Transactions<br/>(~IsCancelled, CustomerID not null, Revenue > 0)"]
+    B --> C["Compute RFM Metrics per Customer<br/>(Recency, Frequency, Monetary)"]
+    C --> D["Rule-Based Quantile Scoring<br/>(pd.qcut on ranks -> R, F, M 1 to 5)"]
+    D --> E["Assign 8 RFM Business Segments<br/>(Champions, Loyal, Hibernating, etc.)"]
+    C --> F["Feature Transformation: np.log1p<br/>(Mitigate severe right skewness)"]
+    F --> G["Feature Standardization: StandardScaler<br/>(Zero mean, unit variance)"]
+    G --> H["Cluster Optimization: K-Means k=2..7<br/>(Elbow Method & Silhouette Scores)"]
+    H --> I["Fit Optimal Model k=2<br/>(Silhouette Score: 0.439)"]
+    I --> J["Dimensionality Reduction via PCA<br/>(2 components explain 95.10% variance)"]
+    E & J --> K["Export Artifacts<br/>(customer_rfm_kmeans_results.csv<br/>customer_cluster_profiles.csv)"]
+```
+
+#### Pipeline Steps:
+1. **RFM Metrics Extraction**:
+   - `Recency`: Days between the client's latest order and the dataset reference anchor (`InvoiceDate.max() + 1 day`).
+   - `Frequency`: Total count of unique, completed non-cancelled orders (`InvoiceNo.nunique()`).
+   - `Monetary`: Total cumulative net revenue contribution per customer (`Revenue.sum()`).
+2. **Rule-Based RFM Scoring**:
+   - Quantile scoring (1 to 5) applied using `pd.qcut(rank(method="first"))` to avoid discrete tie errors.
+   - Assigned customers into 8 behavioral segments (Hibernating: 1,526, Champions: 1,289, Loyal Customers: 1,062, Potential Loyalists: 711, Need Attention: 652, At Risk: 471, Others: 113, New Customers: 54).
+3. **Mathematical Transformation (`np.log1p`)**:
+   - Customer frequency and spending exhibit massive positive skewness. Applying $\ln(1 + x)$ stabilized variance and normalized distributions for Euclidean distance computation.
+4. **Feature Standardization (`StandardScaler`)**:
+   - Rescaled log-transformed features to zero mean ($\mu = 0$) and unit variance ($\sigma = 1$), ensuring Monetary scale (£77k+ max) does not dominate Frequency or Recency.
+5. **Cluster Selection (Elbow Method & Silhouette Analysis)**:
+   - Evaluated cluster counts $k \in [2, 7]$ with 10 random initializations each (`n_init=10`, `random_state=42`).
+   - The **Silhouette Score** peaked conclusively at **$k = 2$** with a score of **0.4386**, confirming that the customer base splits naturally into two primary behavioral populations.
+6. **Principal Component Analysis (PCA) 2D Projection**:
+   - Fitted a 2-component PCA to reduce the 3-dimensional scaled space into 2 orthogonal axes.
+   - The first two principal components captured **95.10% of total variance**, providing visual confirmation of clear cluster boundaries.
+
+#### Actual K-Means Cluster Profiles:
+
+| Cluster | Customers | Avg. Recency | Avg. Frequency | Avg. Monetary | Median Monetary | Customer Share |
+|:---:|---:|---:|---:|---:|---:|---:|
+| **0** | 3,558 | 299.65 days | 2.10 orders | £614.34 | £415.80 | **60.53%** |
+| **1** | 2,320 | 50.56 days | 12.72 orders | £6,546.97 | £2,861.48 | **39.47%** |
+
+#### Behavioral Interpretation:
+- **Cluster 0 — Infrequent / Dormant Shoppers (60.53%)**: Represents relatively inactive customers with an average recency of ~300 days, low purchase frequency (2.1 orders), and modest monetary spend (£614.34 average).
+- **Cluster 1 — High-Value Core Buyers (39.47%)**: Represents active, highly engaged accounts purchasing frequently (12.7 orders), with short recency (50.56 days), and high financial value (£6,546.97 average spend; >10x higher than Cluster 0).
+
+> [!IMPORTANT]
+> **Behavioral Segmentation Notice**: These clusters represent **historical customer behavioral archetypes** based on observed past purchasing data. They describe historical activity tiers and should **not** be construed as deterministic predictions of future individual purchase probability.
+
+#### Cross-Tabulation: RFM Segments vs. K-Means Clusters:
+
+| RFM Segment | Cluster 0 (Dormant/Low-Value) | Cluster 1 (Active/High-Value) | Total Customers |
+|---|---:|---:|---:|
+| **Champions** | 0 | 1,289 | 1,289 |
+| **Loyal Customers** | 354 | 708 | 1,062 |
+| **Potential Loyalists** | 424 | 287 | 711 |
+| **New Customers** | 52 | 2 | 54 |
+| **Need Attention** | 622 | 30 | 652 |
+| **At Risk** | 468 | 3 | 471 |
+| **Hibernating** | 1,525 | 1 | 1,526 |
+| **Others** | 113 | 0 | 113 |
+| **Total** | **3,558** | **2,320** | **5,878** |
+
+*Key Alignment: 100% of Champions and 66.7% of Loyal Customers map into Cluster 1, while 99.9% of Hibernating and 99.4% of At-Risk clients map into Cluster 0, verifying alignment between rule-based domain heuristics and unsupervised clustering.*
+
+- **Generated ML Artifacts**:
+  - Customer-level scores, clusters, and PCA coordinates: [machine_learning/customer_rfm_kmeans_results.csv](machine_learning/customer_rfm_kmeans_results.csv)
+  - Aggregated cluster profiles: [machine_learning/customer_cluster_profiles.csv](machine_learning/customer_cluster_profiles.csv)
+
+---
+
+### 12.2 Sales Forecasting — ARIMA, SARIMA & Baselines
+
+The time-series forecasting pipeline is implemented in [machine_learning/02_sales_forecasting.ipynb](machine_learning/02_sales_forecasting.ipynb), evaluating statistical time-series models against naive baselines to forecast monthly retail turnover:
+
+#### Pipeline Steps:
+1. **Monthly Aggregation & Truncation**:
+   - Resampled total net revenue to monthly starts (`MS`).
+   - The raw data spanned 25 calendar months from Dec 2009 to Dec 2011. Because December 2011 truncated after only 9 days of trading (£637,808.33), it was excluded from model fitting to prevent severe partial-month distortion.
+   - Resulting time series: **24 complete, continuous monthly observations** (December 2009 to November 2011).
+2. **Trend & Moving-Average Diagnostics**:
+   - Analyzed 3-month and 6-month trailing moving averages, revealing strong year-end Q4 acceleration and mid-year cyclicality.
+3. **Train / Test Horizon Partition**:
+   - **Training Window**: 18 months (2009-12-01 to 2011-05-01).
+   - **Testing Window**: 6 months (2011-06-01 to 2011-11-01), capturing summer trading through the peak pre-holiday surge.
+4. **Candidate Models Implemented**:
+   - **Naive Baseline**: Projects the previous month's value forward ($\hat{y}_{t} = y_{t-1}$).
+   - **Seasonal Naive Baseline**: Projects the value from the exact same month of the previous annual seasonal cycle forward ($\hat{y}_{t} = y_{t-12}$).
+   - **ARIMA(1, 1, 1)**: First-differenced non-seasonal autoregressive moving-average model.
+   - **SARIMA(1, 1, 1) × (1, 0, 0, 12)**: Seasonal autoregressive integrated moving-average model incorporating an annual 12-month seasonal lag.
+5. **Rolling-Origin Cross-Validation**:
+   - Evaluated models using an expanding training window: for each month in the 6-month test period, models were trained on all available historical data up to that point, made a 1-step-ahead forecast, and then absorbed the actual realized value before forecasting the subsequent month.
+6. **Model Performance Evaluation**:
+   - Evaluated using Mean Absolute Error (**MAE**), Root Mean Squared Error (**RMSE**), and Symmetric Mean Absolute Percentage Error (**sMAPE**).
+   - Coefficient of Determination ($R^2$) was computed as a **supplementary descriptive metric**, not as the primary model selection criterion.
+
+#### Model Evaluation Benchmark Results:
+
+| Model | MAE (£) | RMSE (£) | sMAPE (%) | $R^2$ (Supplementary) |
+|---|---:|---:|---:|---:|
+| **Seasonal Naive** | **£54,635.89** | **£69,125.55** | **6.24%** | **0.940** |
+| **SARIMA(1,1,1)(1,0,0)₁₂** | £109,790.45 | £123,993.22 | 11.85% | 0.806 |
+| **Naive** | £139,501.86 | £194,053.79 | 13.39% | 0.524 |
+| **ARIMA(1,1,1)** | £164,300.97 | £228,407.28 | 15.60% | 0.341 |
+
+#### Key Analytical Takeaways:
+- **Superiority of the Seasonal Baseline**: **Seasonal Naive achieved the best performance across all primary metrics** (MAE: £54.6k, RMSE: £69.1k, sMAPE: 6.24%). It cut the prediction error of the non-seasonal Naive baseline by more than half.
+- **Why Did Simple Outperform Complex?**: With strong annual seasonality (Q4 holiday surges) and a small sample size (24 monthly observations), parameterized statistical models like SARIMA have fewer degrees of freedom to reliably estimate autoregressive, moving average, and seasonal coefficients without overfitting. A clean seasonal lag ($\hat{y}_{t} = y_{t-12}$) captures the dominant commercial rhythm with zero parameter estimation variance.
+- **Failure of Non-Seasonal Models**: Standard ARIMA had the highest error (sMAPE 15.60%, RMSE £228.4k) because differencing without a seasonal component treats annual holiday surges as unexpected random shocks rather than predictable recurring cycles.
+
+> [!WARNING]
+> **Forecasting Cautions & Sample Limitations**: The dataset contains only 24 complete monthly observations, and the test horizon spans only 6 months. Annual seasonal patterns and forward-looking forecasts must therefore be interpreted cautiously until additional years of operational transaction data are recorded.
+
+#### 3-Month Future Revenue Forecast (Dec 2011 – Feb 2012):
+Using the best-performing model (**Seasonal Naive**), future revenue was forecasted for the three months following the complete dataset:
+
+| Target Month | Predicted Revenue (£) | Forecasting Methodology | Basis / Corresponding Prior Period |
+|:---:|---:|:---:|:---|
+| **2011-12-01** | **£821,452.73** | Seasonal Naive | Realized full-month revenue of December 2010 |
+| **2012-01-01** | **£689,811.61** | Seasonal Naive | Realized full-month revenue of January 2011 |
+| **2012-02-01** | **£522,545.56** | Seasonal Naive | Realized full-month revenue of February 2011 |
+
+- **Generated ML Artifacts**:
+  - Model benchmarking summary: [machine_learning/forecasting_model_evaluation.csv](machine_learning/forecasting_model_evaluation.csv)
+  - Month-by-month rolling predictions: [machine_learning/rolling_forecast_predictions.csv](machine_learning/rolling_forecast_predictions.csv)
+  - 3-month future forecast: [machine_learning/future_sales_forecast.csv](machine_learning/future_sales_forecast.csv)
+
+---
+
+## 13. Business Insights & Practical Recommendations
+
+Based on the combined findings from the Preprocessing, EDA, Customer Segmentation, and Sales Forecasting stages, the following strategic actions are recommended:
+
+1. **Retain and Reward High-Value Core Buyers (Cluster 1)**:
+   - Cluster 1 encompasses only 39.47% of accounts but delivers £6,547 in average spending. Implement dedicated account managers, tiered wholesale loyalty discounts, and VIP shipping privileges to prevent churn among these revenue drivers.
+2. **Execute Automated Win-Back Sequences for Inactive Accounts (Cluster 0 / Hibernating)**:
+   - Over 60% of customer accounts average 300 days of inactivity. Deploy triggered multi-channel re-engagement campaigns (e.g., "We miss you" incentives, curated holiday catalogs) to re-engage lapsed buyers before their account equity erodes completely.
+3. **Align Inventory and Logistics with Proven Annual Seasonality**:
+   - The Seasonal Naive forecasting benchmark demonstrated that monthly revenue closely replicates the prior year's seasonal trajectory. Warehouse staffing, inventory procurement, and working capital allocations should scale upward by September to prepare for the massive October–November peak, followed by planned inventory reduction in January–February.
+4. **Capitalize on High-Basket International Wholesale Markets**:
+   - Export markets such as the Netherlands (£2,419 AOV) and Australia (£1,782 AOV) generate high transaction efficiency. Tailor localized international catalogs and bulk freight incentives to expand wholesale account acquisition abroad.
+5. **Continuous Error Monitoring & Feedback Loops**:
+   - Track monthly forecast variances against the Seasonal Naive baseline. As additional transaction history accumulates, evaluate multi-variable models (incorporating promotions, marketing spend, and product category trends) to refine accuracy.
+
+---
+
+## 14. Future Scope
+
+The completed machine learning and analytical stages pave the way for several advanced capabilities:
+
+1. **Customer Lifetime Value (CLV) Modeling**: Implementing probabilistic BG/NBD and Gamma-Gamma models to predict future purchase frequency and expected customer monetary value over 12-to-36-month horizons.
+2. **Customer Churn Early-Warning System**: Building supervised classification models (Random Forest, XGBoost) to score individual customer churn risk based on receding purchase frequency.
+3. **Product-Level Demand Forecasting**: Transitioning from macro business revenue forecasting to SKU-level inventory demand predictions, mitigating out-of-stock and overstock holding costs.
+4. **Advanced Machine Learning Time-Series Models**: Experimenting with Facebook Prophet, LightGBM with lag/calendar features, and deep learning architectures (N-BEATS, Temporal Fusion Transformers) once multi-year daily data becomes available.
+5. **Expanded Historical Ingestion**: Ingesting additional transaction years to improve degrees of freedom for SARIMA and complex econometric modeling.
+6. **Advanced Non-Linear Clustering**: Exploring density-based clustering (DBSCAN) and Gaussian Mixture Models (GMM) to uncover niche purchasing behaviors that spherical K-Means may obscure.
+7. **Interactive Power BI Enterprise Dashboard**: Connecting preprocessed datasets, RFM segments, K-Means clusters, and time-series forecasts into a unified Power BI executive reporting suite.
 
 ---
 
